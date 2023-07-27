@@ -1,0 +1,53 @@
+version: '3.7'
+
+services:
+  redis:
+    image: redis:6.2-buster
+    container_name: redis
+    command: redis-server --appendonly yes
+    restart: always
+    volumes:
+      - ${APP_DATA_DIR}/redis:/data
+    networks:
+      app_net:
+        ipv4_address: 192.168.1.10
+
+  web:
+    image: bluewalletorganization/lndhub:v1.3.0
+    container_name: web
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    depends_on: [ redis ]
+    restart: on-failure
+    stop_grace_period: 5m30s
+    stop_signal: SIGINT
+    ports:
+      - "${APP_LNDHUB_PORT}:${APP_LNDHUB_PORT}"
+    volumes:
+      - ${LND_DATA_DIR}:/lnd:ro
+      - ./tls.cert:/tls.cert
+      - ./admin.macaroon:/admin.macaroon
+    environment:
+      TOR_URL: ${APP_HIDDEN_SERVICE}
+      REDIS_URI: redis://192.168.1.10:6379
+      BITCOIN_NETWORK: ${BITCOIN_NETWORK}
+      LND_DIR: /lnd
+      LND_TLS_CERT: /lnd/tls.cert
+      LND_MACAROON: /lnd/data/chain/bitcoin/${BITCOIN_NETWORK}/admin.macaroon
+      LND_SOCKET: grpc://${LND_IP}:${LND_GRPC_PORT}
+      LND_CERT_FILE: ${LND_CERT_FILE}
+      LND_ADMIN_MACAROON_FILE: ${LND_ADMIN_MACAROON_FILE}
+      CONFIG: '{ "redis": { "port": 6379, "host": "192.168.1.10", "family": 4, "password": "", "db": 0 }, "lnd": { "url": "172.20.0.3:10009", "password": ""}}'
+    networks:
+      app_net:
+        ipv4_address: ${APP_LNDHUB_IP}
+
+networks:
+  app_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/16

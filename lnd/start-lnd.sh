@@ -13,10 +13,6 @@ RPCHOST="blockchain"
 RPCUSER="devuser"
 RPCPASS="devpass"
 
-# Change permissions of the macaroon and tls.cert files
-# chmod 644 /root/.lnd/data/chain/bitcoin/testnet/admin.macaroon
-# chmod 644 /root/.lnd/tls.cert
-
 exec lnd \
     --noseedbackup \
     "--$CHAIN.active" \

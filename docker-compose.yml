@@ -1,16 +1,36 @@
 version: '3'
 services:
+  btcd:
+    container_name: btcd
+    build:
+      context: btcd/
+    volumes:
+      - shared:/rpc
+      - bitcoin:/data
+    environment:
+      - RPCUSER
+      - RPCPASS
+      - NETWORK
+      - DEBUG
+      - MINING_ADDRESS
+    restart: on-failure
+    entrypoint: ["./start-btcd.sh"]
+
   lnd:
-    image: lightninglabs/lnd:v0.14.1-beta
+    build:
+      context: lnd/
     container_name: lnd
     volumes:
-      - lnd_data:/root/.lnd
-      - ./start-lnd.sh:/start-lnd.sh
+      - shared:/rpc
+      - lnd:/root/.lnd
+      - ./lnd/start-lnd.sh:/start-lnd.sh
       - ./rpc.txt:/rpc.txt
     ports:
       - 9735:9735
       - 10009:10009
-    entrypoint: ["sh", "/start-lnd.sh", "--wallet-unlock-password-file", "/rpc.txt"]
+    depends_on:
+      - btcd
+    entrypoint: ["sh", "/start-lnd.sh"]
 
   redis:
     image: redis:latest
@@ -21,11 +41,12 @@ services:
       - 6379:6379
 
   lndhub:
-    image: bluewalletorganization/lndhub:v1.3.0
+    build:
+      context: lndhub/
     container_name: lndhub
     volumes:
-      - lnd_data:/root/.lnd
-      - lndhub_data:/root/.lndhub
+      - lnd:/root/.lnd
+      - lndhub:/root/.lndhub
     ports:
       - 3000:3000
     depends_on:
@@ -34,12 +55,15 @@ services:
     environment:
       - LND_ADMIN_MACAROON_FILE=/root/.lnd/data/chain/bitcoin/testnet/admin.macaroon
       - LND_CERT_FILE=/root/.lnd/tls.cert
-    # command: ["command-to-start-lndhub"]
 
 volumes:
-  lnd_data:
+  lnd:
     driver: local
   redis_data:
     driver: local
-  lndhub_data:
+  lndhub:
+    driver: local
+  bitcoin:
+    driver: local
+  shared:
     driver: local

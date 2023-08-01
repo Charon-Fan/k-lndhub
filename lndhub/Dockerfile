@@ -1,0 +1,1 @@
+FROM bluewalletorganization/lndhub:v1.3.0

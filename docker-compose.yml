@@ -44,6 +44,7 @@ services:
     build:
       context: lndhub/
     container_name: lndhub
+    user: root
     volumes:
       - lnd:/root/.lnd
       - lndhub:/root/.lndhub
@@ -55,6 +56,7 @@ services:
     environment:
       - LND_ADMIN_MACAROON_FILE=/root/.lnd/data/chain/bitcoin/testnet/admin.macaroon
       - LND_CERT_FILE=/root/.lnd/tls.cert
+      - CONFIG={"enableUpdateDescribeGraph":false,"postRateLimit":100,"rateLimit":200,"forwardReserveFee":0.01,"intraHubFee":0.003,"redis":{"port":6379,"host":"redis","family":4,"password":"","db":0},"lnd":{"url":"lnd:10009","password":""}}
 
 volumes:
   lnd:

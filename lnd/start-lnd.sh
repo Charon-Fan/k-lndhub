@@ -5,7 +5,7 @@ set -e
 
 # Set default variables if needed.
 DEBUG="debug"
-NETWORK="testnet"
+NETWORK="mainnet"
 CHAIN="bitcoin"
 BACKEND="btcd"
 RPCCRTPATH="/rpc/rpc.cert"
@@ -22,8 +22,6 @@ exec lnd \
     "--$BACKEND.rpchost"="$RPCHOST" \
     "--$BACKEND.rpcuser"="$RPCUSER" \
     "--$BACKEND.rpcpass"="$RPCPASS" \
-    "--rpclisten=$HOSTNAME:10009" \
-    "--rpclisten=localhost:10009" \
     "--rpclisten=localhost:10009" \
     --debuglevel="$DEBUG" \
     "$@"

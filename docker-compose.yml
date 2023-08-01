@@ -1,7 +1,7 @@
 version: '3'
 services:
-  btcd:
-    container_name: btcd
+  blockchain:
+    container_name: blockchain
     build:
       context: btcd/
     volumes:
@@ -29,7 +29,7 @@ services:
       - 9735:9735
       - 10009:10009
     depends_on:
-      - btcd
+      - blockchain
     entrypoint: ["sh", "/start-lnd.sh"]
 
   redis:
@@ -54,7 +54,7 @@ services:
       - lnd
       - redis
     environment:
-      - LND_ADMIN_MACAROON_FILE=/root/.lnd/data/chain/bitcoin/testnet/admin.macaroon
+      - LND_ADMIN_MACAROON_FILE=/root/.lnd/data/chain/bitcoin/mainnet/admin.macaroon
       - LND_CERT_FILE=/root/.lnd/tls.cert
       - CONFIG={"enableUpdateDescribeGraph":false,"postRateLimit":100,"rateLimit":200,"forwardReserveFee":0.01,"intraHubFee":0.003,"redis":{"port":6379,"host":"redis","family":4,"password":"","db":0},"lnd":{"url":"lnd:10009","password":""}}
 

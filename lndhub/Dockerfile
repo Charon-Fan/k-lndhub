@@ -1,1 +1,1 @@
-FROM bluewalletorganization/lndhub:v1.3.0
+FROM bluewalletorganization/lndhub:v1.4.1

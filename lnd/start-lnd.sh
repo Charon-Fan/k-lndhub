@@ -22,6 +22,6 @@ exec lnd \
     "--$BACKEND.rpchost"="$RPCHOST" \
     "--$BACKEND.rpcuser"="$RPCUSER" \
     "--$BACKEND.rpcpass"="$RPCPASS" \
-    "--rpclisten=localhost:10009" \
+    "--rpclisten=0.0.0.0:10009" \
     --debuglevel="$DEBUG" \
     "$@"

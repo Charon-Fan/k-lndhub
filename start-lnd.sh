@@ -9,6 +9,10 @@ NETWORK="testnet"
 CHAIN="bitcoin"
 BACKEND="neutrino"
 
+# Change permissions of the macaroon and tls.cert files
+chmod 644 /root/.lnd/data/chain/bitcoin/testnet/admin.macaroon
+chmod 644 /root/.lnd/tls.cert
+
 exec lnd \
     "--$CHAIN.active" \
     "--$CHAIN.$NETWORK" \

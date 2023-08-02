@@ -31,6 +31,9 @@ services:
     depends_on:
       - lnd
       - redis
+    environment:
+      - LND_ADMIN_MACAROON_FILE=/root/.lnd/data/chain/bitcoin/testnet/admin.macaroon
+      - LND_CERT_FILE=/root/.lnd/tls.cert
     # command: ["command-to-start-lndhub"]
 
 volumes:
